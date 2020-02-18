@@ -74,8 +74,7 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
-		Usuario usuario = new Usuario();
-		usuario.setNome("Douglas");
+		Usuario usuario = new Usuario("Douglas");
 		
 		expectedException.expect(LocadoraException.class);
 		expectedException.expectMessage("Filme vazio");
@@ -83,4 +82,59 @@ public class LocacaoServiceTest {
 		locacaoService.alugarFilme(usuario, null);	
 	}
 	
+	@Test
+	public void pagar75PctFilme3() throws FilmeSemEstoqueException, LocadoraException{
+		Filme filme = new Filme("Titanic", 2, 10.00);
+		Filme filme2 = new Filme("Carros", 2, 5.00);
+		Filme filme3 = new Filme("Peixe", 2, 12.00);
+		Usuario usuario = new Usuario("Douglas");
+		
+		Locacao resultado = locacaoService.alugarFilme(usuario, Arrays.asList(filme, filme2, filme3));
+		
+		assertThat(resultado.getValor(), CoreMatchers.is(24.00));
+	}
+	
+	@Test
+	public void pagar50PctFilme4() throws FilmeSemEstoqueException, LocadoraException{
+		Filme filme = new Filme("Titanic", 2, 10.00);
+		Filme filme2 = new Filme("Carros", 2, 5.00);
+		Filme filme3 = new Filme("Peixe", 2, 12.00);
+		Filme filme4 = new Filme("Peixe", 2, 10.00);
+		Usuario usuario = new Usuario("Douglas");
+		
+		Locacao resultado = locacaoService.alugarFilme(usuario, Arrays.asList(filme, filme2, filme3, filme4));
+		
+		assertThat(resultado.getValor(), CoreMatchers.is(29.00));
+	}
+	
+	@Test
+	public void pagar25PctFilme5() throws FilmeSemEstoqueException, LocadoraException{
+		Filme filme = new Filme("Titanic", 2, 10.00);
+		Filme filme2 = new Filme("Carros", 2, 5.00);
+		Filme filme3 = new Filme("Peixe", 2, 12.00);
+		Filme filme4 = new Filme("Peixe", 2, 10.00);
+		Filme filme5 = new Filme("Peixe", 2, 12.00);
+		
+		Usuario usuario = new Usuario("Douglas");
+		
+		Locacao resultado = locacaoService.alugarFilme(usuario, Arrays.asList(filme, filme2, filme3, filme4, filme5));
+		
+		assertThat(resultado.getValor(), CoreMatchers.is(32.00));
+	}
+	
+	@Test
+	public void pagar0PctFilme6() throws FilmeSemEstoqueException, LocadoraException{
+		Filme filme = new Filme("Titanic", 2, 10.00);
+		Filme filme2 = new Filme("Carros", 2, 5.00);
+		Filme filme3 = new Filme("Peixe", 2, 12.00);
+		Filme filme4 = new Filme("Peixe", 2, 10.00);
+		Filme filme5 = new Filme("Peixe", 2, 12.00);
+		Filme filme6 = new Filme("Peixe", 2, 12.00);
+		
+		Usuario usuario = new Usuario("Douglas");
+		
+		Locacao resultado = locacaoService.alugarFilme(usuario, Arrays.asList(filme, filme2, filme3, filme4, filme5, filme6));
+		
+		assertThat(resultado.getValor(), CoreMatchers.is(32.00));
+	}
 }
