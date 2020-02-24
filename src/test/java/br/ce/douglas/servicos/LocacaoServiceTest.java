@@ -22,6 +22,8 @@ import br.ce.douglas.entidades.Locacao;
 import br.ce.douglas.entidades.Usuario;
 import br.ce.douglas.exceptions.FilmeSemEstoqueException;
 import br.ce.douglas.exceptions.LocadoraException;
+import br.ce.douglas.matchers.DiaSemanaMatcher;
+import br.ce.douglas.matchers.MatchersProprios;
 import br.ce.douglas.utils.DataUtils;
 
 public class LocacaoServiceTest {
@@ -48,9 +50,12 @@ public class LocacaoServiceTest {
 		
 		Locacao locacao = new LocacaoService().alugarFilme(usuario, Arrays.asList(filme, filme2));
 		
-		error.checkThat(locacao.getValor(), CoreMatchers.is(CoreMatchers.equalTo(15.0)));
-	    error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true));
-	    error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), CoreMatchers.is(true));
+		//error.checkThat(locacao.getValor(), CoreMatchers.is(CoreMatchers.equalTo(15.0)));
+	    //error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true));
+	    //error.checkThat(DataUtils.isMesmaData(locacao.getDataRetorno(), DataUtils.obterDataComDiferencaDias(1)), CoreMatchers.is(true));
+		
+		error.checkThat(locacao.getDataLocacao(), MatchersProprios.hoje());
+		error.checkThat(locacao.getDataRetorno(), MatchersProprios.hojeComDiferencaDias(1));
 	}
 	
 	@Test(expected = FilmeSemEstoqueException.class)
@@ -95,8 +100,11 @@ public class LocacaoServiceTest {
 		
 		Locacao resultado = locacaoService.alugarFilme(usuario, Arrays.asList(filme));
 		
-		boolean isSegunda = DataUtils.verificarDiaSemana(resultado.getDataRetorno(), Calendar.MONDAY);
+		//boolean isSegunda = DataUtils.verificarDiaSemana(resultado.getDataRetorno(), Calendar.MONDAY);
+		//assertTrue(isSegunda);
 		
-		assertTrue(isSegunda);
+		//assertThat(resultado.getDataRetorno(), new DiaSemanaMatcher(Calendar.SUNDAY));
+		assertThat(resultado.getDataRetorno(), MatchersProprios.paraDia(Calendar.MONDAY));
+		assertThat(resultado.getDataRetorno(), MatchersProprios.paraSegunda());
 	}
 }

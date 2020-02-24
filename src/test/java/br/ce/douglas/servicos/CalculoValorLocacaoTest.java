@@ -61,13 +61,15 @@ public class CalculoValorLocacaoTest {
 	public void calcularValorLocacaoComDescontos() throws FilmeSemEstoqueException, LocadoraException{
 		Usuario usuario = new Usuario("Douglas");
 		
-		Locacao resultado = locacaoService.alugarFilme(usuario, Arrays.asList(filme1, filme2, filme3, filme4, filme5,filme6,filme7));
+		Locacao resultado = locacaoService.alugarFilme(usuario, filmes);
 		
 		assertThat(resultado.getValor(), CoreMatchers.is(valorLocacao));
+		
+		System.out.println("!");
 	}
 	
 	@Test
-	public void exibitValorALocacao() {
+	public void exibirValorALocacao() {
 		System.out.println(valorLocacao);
 	}
 }
