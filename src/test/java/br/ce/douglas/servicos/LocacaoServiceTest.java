@@ -16,8 +16,9 @@ import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
+import br.ce.douglas.builders.FilmeBuilder;
+import br.ce.douglas.builders.UsuarioBuilder;
 import br.ce.douglas.daos.LocacaoDAO;
-import br.ce.douglas.daos.LocacaoDAO2;
 import br.ce.douglas.entidades.Filme;
 import br.ce.douglas.entidades.Locacao;
 import br.ce.douglas.entidades.Usuario;
@@ -25,6 +26,7 @@ import br.ce.douglas.exceptions.FilmeSemEstoqueException;
 import br.ce.douglas.exceptions.LocadoraException;
 import br.ce.douglas.matchers.MatchersProprios;
 import br.ce.douglas.utils.DataUtils;
+import buildermaster.BuilderMaster;
 
 public class LocacaoServiceTest {
 	
@@ -41,6 +43,7 @@ public class LocacaoServiceTest {
 		locacaoService = new LocacaoService();
 		LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
 		locacaoService.setLocacaoDAO(dao);
+		SPCService spc = Mockito.mock(SPCService.class);
 	}
 	
 	@Test
@@ -48,9 +51,9 @@ public class LocacaoServiceTest {
 		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
 		Filme filme = new Filme("Titanic", 2, 10.00);
 		Filme filme2 = new Filme("Carros", 3, 5.00);
-		Usuario usuario = new Usuario("Douglas");
+		Usuario usuario = UsuarioBuilder.umUsuario().agora();
 		
-		Locacao locacao = locacaoService.alugarFilme(usuario, Arrays.asList(filme, filme2));
+		Locacao locacao = locacaoService.alugarFilme(usuario, Arrays.asList(FilmeBuilder.umFilme().agora()));
 		
 		//error.checkThat(locacao.getValor(), CoreMatchers.is(CoreMatchers.equalTo(15.0)));
 	    //error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true));
@@ -62,20 +65,16 @@ public class LocacaoServiceTest {
 	
 	@Test(expected = FilmeSemEstoqueException.class)
 	public void filmeSemEstoque() throws Exception{
-		Filme filme = new Filme("Titanic", 2, 10.00);
-		Filme filme2 = new Filme("Carros", 0, 5.00);
-		Usuario usuario = new Usuario("Douglas");
+		Usuario usuario = UsuarioBuilder.umUsuario().agora();
 		
-		locacaoService.alugarFilme(usuario, Arrays.asList(filme, filme2));
+		locacaoService.alugarFilme(usuario, Arrays.asList(FilmeBuilder.umFilme().semEstoque().agora()));
 	}
 	
 	@Test
 	public void usuarioVazio() throws FilmeSemEstoqueException{
-		Filme filme = new Filme("Titanic", 2, 10.00);
-		Filme filme2 = new Filme("Carros", 3, 5.00);
 		
 		try {
-			locacaoService.alugarFilme(null, Arrays.asList(filme, filme2));
+			locacaoService.alugarFilme(null, Arrays.asList(FilmeBuilder.umFilme().agora()));
 			fail();
 		} catch (Exception e) {
 			assertThat(e.getMessage(), CoreMatchers.is("Usuario vazio"));
@@ -85,7 +84,7 @@ public class LocacaoServiceTest {
 	
 	@Test
 	public void filmeVazio() throws FilmeSemEstoqueException, LocadoraException {
-		Usuario usuario = new Usuario("Douglas");
+		Usuario usuario = UsuarioBuilder.umUsuario().agora();
 		
 		expectedException.expect(LocadoraException.class);
 		expectedException.expectMessage("Filme vazio");
@@ -96,11 +95,10 @@ public class LocacaoServiceTest {
 	@Test
 	public void naoDevolverDomingo() throws FilmeSemEstoqueException, LocadoraException {
 		Assume.assumeTrue(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		Filme filme = new Filme("Titanic", 2, 10.00);
 		
-		Usuario usuario = new Usuario("Douglas");
+		Usuario usuario = UsuarioBuilder.umUsuario().agora();
 		
-		Locacao resultado = locacaoService.alugarFilme(usuario, Arrays.asList(filme));
+		Locacao resultado = locacaoService.alugarFilme(usuario, Arrays.asList(FilmeBuilder.umFilme().agora()));
 		
 		//boolean isSegunda = DataUtils.verificarDiaSemana(resultado.getDataRetorno(), Calendar.MONDAY);
 		//assertTrue(isSegunda);
@@ -108,5 +106,14 @@ public class LocacaoServiceTest {
 		//assertThat(resultado.getDataRetorno(), new DiaSemanaMatcher(Calendar.SUNDAY));
 		assertThat(resultado.getDataRetorno(), MatchersProprios.paraDia(Calendar.MONDAY));
 		assertThat(resultado.getDataRetorno(), MatchersProprios.paraSegunda());
+	}
+	
+	public static void main(String[] args) {
+		new BuilderMaster().gerarCodigoClasse(Locacao.class);
+	}
+	
+	@Test
+	public void naoAlugarFilmeParaNegativadoSPC() {
+		
 	}
 }

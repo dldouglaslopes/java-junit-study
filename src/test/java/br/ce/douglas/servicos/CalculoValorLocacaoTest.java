@@ -14,6 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import br.ce.douglas.builders.FilmeBuilder;
 import br.ce.douglas.daos.LocacaoDAO;
 import br.ce.douglas.daos.LocacaoDAO2;
 import br.ce.douglas.entidades.Filme;
@@ -42,13 +43,13 @@ public class CalculoValorLocacaoTest {
 		locacaoService.setLocacaoDAO(dao);
 	}
 	
-	private static Filme filme1 = new Filme("Filme 1", 2, 4.0);
-	private static Filme filme2 = new Filme("Filme 2", 2, 4.0);
-	private static Filme filme3 = new Filme("Filme 3", 2, 4.0);
-	private static Filme filme4 = new Filme("Filme 4", 2, 4.0);
-	private static Filme filme5 = new Filme("Filme 5", 2, 4.0);
-	private static Filme filme6 = new Filme("Filme 6", 2, 4.0);
-	private static Filme filme7 = new Filme("Filme 7", 2, 4.0);
+	private static Filme filme1 = FilmeBuilder.umFilme().agora();
+	private static Filme filme2 = FilmeBuilder.umFilme().agora();
+	private static Filme filme3 = FilmeBuilder.umFilme().agora();
+	private static Filme filme4 = FilmeBuilder.umFilme().agora();
+	private static Filme filme5 = FilmeBuilder.umFilme().agora();
+	private static Filme filme6 = FilmeBuilder.umFilme().agora();
+	private static Filme filme7 = FilmeBuilder.umFilme().agora();
 	
 	@Parameters(name="{2}")
 	public static Collection<Object[]> getParametros(){

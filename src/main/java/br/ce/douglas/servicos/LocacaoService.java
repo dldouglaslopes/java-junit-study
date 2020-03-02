@@ -15,6 +15,7 @@ import br.ce.douglas.utils.DataUtils;
 public class LocacaoService {
 	
 	private LocacaoDAO dao;
+	private SPCService spcService;
 	
 	public Locacao alugarFilme(Usuario usuario, List<Filme> filmes) throws FilmeSemEstoqueException, LocadoraException {
 		
@@ -31,6 +32,8 @@ public class LocacaoService {
 				throw new FilmeSemEstoqueException();
 			}
 		}
+		
+		
 		
 		Locacao locacao = new Locacao();
 		locacao.setFilmes(filmes);
@@ -79,4 +82,7 @@ public class LocacaoService {
 		this.dao = dao;
 	}
 	
+	public void setSPCService(SPCService spc) {
+		spcService = spc;
+	}
 }
