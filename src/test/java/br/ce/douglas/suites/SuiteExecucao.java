@@ -20,11 +20,11 @@ public class SuiteExecucao {
 
 	@BeforeClass
 	public static void before() {
-		System.out.println("before");
+		//System.out.println("before");
 	}
 	
 	@AfterClass
 	public static void after() {
-		System.out.println("after");
+		//System.out.println("after");
 	}
 }

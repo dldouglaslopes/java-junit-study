@@ -14,6 +14,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
+import br.ce.douglas.daos.LocacaoDAO;
+import br.ce.douglas.daos.LocacaoDAO2;
 import br.ce.douglas.entidades.Filme;
 import br.ce.douglas.entidades.Locacao;
 import br.ce.douglas.entidades.Usuario;
@@ -36,6 +38,8 @@ public class CalculoValorLocacaoTest {
 	@Before
 	public void setup() {
 		locacaoService = new LocacaoService();
+		LocacaoDAO dao = new LocacaoDAO2();
+		locacaoService.setLocacaoDAO(dao);
 	}
 	
 	private static Filme filme1 = new Filme("Filme 1", 2, 4.0);
@@ -65,11 +69,11 @@ public class CalculoValorLocacaoTest {
 		
 		assertThat(resultado.getValor(), CoreMatchers.is(valorLocacao));
 		
-		System.out.println("!");
+		//System.out.println("!");
 	}
 	
 	@Test
 	public void exibirValorALocacao() {
-		System.out.println(valorLocacao);
+		//System.out.println(valorLocacao);
 	}
 }

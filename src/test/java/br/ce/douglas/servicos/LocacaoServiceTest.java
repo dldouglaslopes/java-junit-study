@@ -1,7 +1,6 @@
 package br.ce.douglas.servicos;
 
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -11,18 +10,18 @@ import java.util.Date;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assume;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import br.ce.douglas.daos.LocacaoDAO;
+import br.ce.douglas.daos.LocacaoDAO2;
 import br.ce.douglas.entidades.Filme;
 import br.ce.douglas.entidades.Locacao;
 import br.ce.douglas.entidades.Usuario;
 import br.ce.douglas.exceptions.FilmeSemEstoqueException;
 import br.ce.douglas.exceptions.LocadoraException;
-import br.ce.douglas.matchers.DiaSemanaMatcher;
 import br.ce.douglas.matchers.MatchersProprios;
 import br.ce.douglas.utils.DataUtils;
 
@@ -39,6 +38,8 @@ public class LocacaoServiceTest {
 	@Before
 	public void setup() {
 		locacaoService = new LocacaoService();
+		LocacaoDAO dao = new LocacaoDAO2();
+		locacaoService.setLocacaoDAO(dao);
 	}
 	
 	@Test
@@ -48,7 +49,7 @@ public class LocacaoServiceTest {
 		Filme filme2 = new Filme("Carros", 3, 5.00);
 		Usuario usuario = new Usuario("Douglas");
 		
-		Locacao locacao = new LocacaoService().alugarFilme(usuario, Arrays.asList(filme, filme2));
+		Locacao locacao = locacaoService.alugarFilme(usuario, Arrays.asList(filme, filme2));
 		
 		//error.checkThat(locacao.getValor(), CoreMatchers.is(CoreMatchers.equalTo(15.0)));
 	    //error.checkThat(DataUtils.isMesmaData(locacao.getDataLocacao(), new Date()), CoreMatchers.is(true));
