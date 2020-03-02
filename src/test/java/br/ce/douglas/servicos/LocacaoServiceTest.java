@@ -26,11 +26,12 @@ import br.ce.douglas.exceptions.FilmeSemEstoqueException;
 import br.ce.douglas.exceptions.LocadoraException;
 import br.ce.douglas.matchers.MatchersProprios;
 import br.ce.douglas.utils.DataUtils;
-import buildermaster.BuilderMaster;
 
 public class LocacaoServiceTest {
 	
 	private LocacaoService locacaoService;
+	private LocacaoDAO dao;
+	private SPCService spc;
 	
 	@Rule
 	public ErrorCollector error = new ErrorCollector();
@@ -41,16 +42,15 @@ public class LocacaoServiceTest {
 	@Before
 	public void setup() {
 		locacaoService = new LocacaoService();
-		LocacaoDAO dao = Mockito.mock(LocacaoDAO.class);
+		dao = Mockito.mock(LocacaoDAO.class);
 		locacaoService.setLocacaoDAO(dao);
-		SPCService spc = Mockito.mock(SPCService.class);
+		spc = Mockito.mock(SPCService.class);
+		locacaoService.setSPCService(spc);
 	}
 	
 	@Test
 	public void teste () throws Exception {
 		Assume.assumeFalse(DataUtils.verificarDiaSemana(new Date(), Calendar.SATURDAY));
-		Filme filme = new Filme("Titanic", 2, 10.00);
-		Filme filme2 = new Filme("Carros", 3, 5.00);
 		Usuario usuario = UsuarioBuilder.umUsuario().agora();
 		
 		Locacao locacao = locacaoService.alugarFilme(usuario, Arrays.asList(FilmeBuilder.umFilme().agora()));
@@ -108,12 +108,20 @@ public class LocacaoServiceTest {
 		assertThat(resultado.getDataRetorno(), MatchersProprios.paraSegunda());
 	}
 	
-	public static void main(String[] args) {
-		new BuilderMaster().gerarCodigoClasse(Locacao.class);
-	}
+//	public static void main(String[] args) {
+//		new BuilderMaster().gerarCodigoClasse(Locacao.class);
+//	}
 	
 	@Test
-	public void naoAlugarFilmeParaNegativadoSPC() {
+	public void naoAlugarFilmeParaNegativadoSPC() throws FilmeSemEstoqueException, LocadoraException {
+		Usuario usuario = UsuarioBuilder.umUsuario().agora();
+		java.util.List<Filme> filmes = Arrays.asList(FilmeBuilder.umFilme().agora());
 		
+		Mockito.when(spc.possuiNegativacao(usuario)).thenReturn(true);
+		
+		expectedException.expect(LocadoraException.class);
+		expectedException.expectMessage("Usuario Negativado");
+		
+		locacaoService.alugarFilme(usuario, filmes);
 	}
 }

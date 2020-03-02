@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
+import org.mockito.Mockito;
 
 import br.ce.douglas.builders.FilmeBuilder;
 import br.ce.douglas.daos.LocacaoDAO;
@@ -41,6 +42,8 @@ public class CalculoValorLocacaoTest {
 		locacaoService = new LocacaoService();
 		LocacaoDAO dao = new LocacaoDAO2();
 		locacaoService.setLocacaoDAO(dao);
+		SPCService spc = Mockito.mock(SPCService.class);
+		locacaoService.setSPCService(spc);
 	}
 	
 	private static Filme filme1 = FilmeBuilder.umFilme().agora();
