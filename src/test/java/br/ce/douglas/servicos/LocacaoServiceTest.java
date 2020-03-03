@@ -124,7 +124,7 @@ public class LocacaoServiceTest {
 //	}
 	
 	@Test
-	public void naoAlugarFilmeParaNegativadoSPC() throws FilmeSemEstoqueException{
+	public void naoAlugarFilmeParaNegativadoSPC() throws Exception{
 		Usuario usuario = UsuarioBuilder.umUsuario().agora();
 		
 		java.util.List<Filme> filmes = Arrays.asList(FilmeBuilder.umFilme().agora());
@@ -174,5 +174,18 @@ public class LocacaoServiceTest {
 		Mockito.verify(emailService, Mockito.never()).notificaAtraso(usuario2);
 		Mockito.verifyNoMoreInteractions(emailService);
 		Mockito.verifyZeroInteractions(spc);
+	}
+	
+	@Test
+	public void tratarErrosSPC() throws Exception {
+		Usuario usuario = UsuarioBuilder.umUsuario().agora();
+		List<Filme> filmes = Arrays.asList(FilmeBuilder.umFilme().agora());
+		
+		Mockito.when(spc.possuiNegativacao(usuario)).thenThrow(new Exception("Falha catastrófica"));
+		
+		expectedException.expect(LocadoraException.class);
+		expectedException.expectMessage("Problemas com SPC, tente novamente");
+		
+		locacaoService.alugarFilme(usuario, filmes);
 	}
 }
