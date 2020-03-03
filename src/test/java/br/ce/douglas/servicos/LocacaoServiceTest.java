@@ -16,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -187,5 +188,21 @@ public class LocacaoServiceTest {
 		expectedException.expectMessage("Problemas com SPC, tente novamente");
 		
 		locacaoService.alugarFilme(usuario, filmes);
+	}
+	
+	@Test
+	public void prorogarLocacao() {
+		Locacao locacao = LocacaoBuilder.umLocacao().agora();
+		
+		locacaoService.prorrogarLocacao(locacao, 3);
+		
+		ArgumentCaptor<Locacao> argCapt = ArgumentCaptor.forClass(Locacao.class);
+		
+		Mockito.verify(dao).salvar(argCapt.capture());
+		Locacao locacaoRetornada = argCapt.getValue();
+		
+		error.checkThat(locacaoRetornada.getValor(), CoreMatchers.is(12.0));
+		error.checkThat(locacaoRetornada.getDataLocacao(), MatchersProprios.hoje());
+		error.checkThat(locacaoRetornada.getDataRetorno(), MatchersProprios.hojeComDiferencaDias(3));
 	}
 }
