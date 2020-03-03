@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
+import org.mockito.exceptions.verification.NeverWantedButInvoked;
 
 import br.ce.douglas.builders.FilmeBuilder;
 import br.ce.douglas.builders.LocacaoBuilder;
@@ -140,12 +141,34 @@ public class LocacaoServiceTest {
 	public void enviarEmailLocacoesAtradasas() {
 		Usuario usuario = UsuarioBuilder.umUsuario().agora();
 		Usuario usuario2 = UsuarioBuilder.umUsuario().comNome("Usuario 2").agora();
+		Usuario usuario3 = UsuarioBuilder.umUsuario().comNome("Usuario atrasado").agora();
 
-		List<Locacao> locacoes = Arrays.asList(LocacaoBuilder.umLocacao().comUsuario(usuario).comDataRetorno(DataUtils.obterDataComDiferencaDias(-2)).agora());
+		List<Locacao> locacoes = Arrays.asList(LocacaoBuilder.umLocacao()
+															.comUsuario(usuario)
+															.atrasada()
+															.agora(),
+												LocacaoBuilder.umLocacao().
+																comUsuario(usuario2)
+																.agora(),
+												LocacaoBuilder.umLocacao()
+																.comUsuario(usuario3)
+																.atrasada()
+																.agora(),
+												LocacaoBuilder.umLocacao()
+																.comUsuario(usuario3)
+																.atrasada()
+																.agora());
+		
 		Mockito.when(dao.obterLocacoesPendentes()).thenReturn(locacoes);
 		
 		locacaoService.notificarAtrasos();
 		
+		Mockito.verify(emailService, Mockito.times(3)).notificaAtraso(Mockito.any(Usuario.class));
+		
 		Mockito.verify(emailService).notificaAtraso(usuario);
+		Mockito.verify(emailService, Mockito.times(2)).notificaAtraso(usuario3);
+		Mockito.verify(emailService, Mockito.never()).notificaAtraso(usuario2);
+		Mockito.verifyNoMoreInteractions(emailService);
+		Mockito.verifyZeroInteractions(spc);
 	}
 }
