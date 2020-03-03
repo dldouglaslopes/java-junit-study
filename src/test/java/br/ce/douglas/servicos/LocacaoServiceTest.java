@@ -16,7 +16,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.mockito.exceptions.verification.NeverWantedButInvoked;
 
 import br.ce.douglas.builders.FilmeBuilder;
@@ -33,9 +36,16 @@ import br.ce.douglas.utils.DataUtils;
 
 public class LocacaoServiceTest {
 	
+	@InjectMocks
 	private LocacaoService locacaoService;
+	
+	@Mock
 	private LocacaoDAO dao;
+	
+	@Mock
 	private SPCService spc;
+	
+	@Mock
 	private EmailService emailService;
 	
 	@Rule
@@ -46,13 +56,7 @@ public class LocacaoServiceTest {
 	
 	@Before
 	public void setup() {
-		locacaoService = new LocacaoService();
-		dao = Mockito.mock(LocacaoDAO.class);
-		locacaoService.setLocacaoDAO(dao);
-		spc = Mockito.mock(SPCService.class);
-		locacaoService.setSPCService(spc);
-		emailService = Mockito.mock(EmailService.class);
-		locacaoService.setEmailService(emailService);
+		MockitoAnnotations.initMocks(this);
 	}
 	
 	@Test

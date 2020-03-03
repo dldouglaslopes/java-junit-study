@@ -13,11 +13,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import br.ce.douglas.builders.FilmeBuilder;
 import br.ce.douglas.daos.LocacaoDAO;
-import br.ce.douglas.daos.LocacaoDAO2;
 import br.ce.douglas.entidades.Filme;
 import br.ce.douglas.entidades.Locacao;
 import br.ce.douglas.entidades.Usuario;
@@ -26,7 +27,15 @@ import br.ce.douglas.exceptions.LocadoraException;
 
 @RunWith(Parameterized.class)
 public class CalculoValorLocacaoTest {
+	
+	@InjectMocks
 	private LocacaoService locacaoService;
+	
+	@Mock
+	private LocacaoDAO dao;
+	
+	@Mock
+	private SPCService spc;
 	
 	@Parameter
 	public List<Filme> filmes;
@@ -39,11 +48,7 @@ public class CalculoValorLocacaoTest {
 	
 	@Before
 	public void setup() {
-		locacaoService = new LocacaoService();
-		LocacaoDAO dao = new LocacaoDAO2();
-		locacaoService.setLocacaoDAO(dao);
-		SPCService spc = Mockito.mock(SPCService.class);
-		locacaoService.setSPCService(spc);
+		MockitoAnnotations.initMocks(this);
 	}
 	
 	private static Filme filme1 = FilmeBuilder.umFilme().agora();
