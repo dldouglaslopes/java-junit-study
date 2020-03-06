@@ -23,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.internal.util.reflection.Whitebox;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -237,5 +238,12 @@ public class LocacaoServiceTest {
 		
 		Assert.assertThat(locacao.getValor(), CoreMatchers.is(1.0));
 		PowerMockito.verifyPrivate(locacaoService).invoke("calcularValorLocacao", filmes);
+	}
+	
+	@Test
+	public void calcularValorLocacao() throws Exception {
+		List<Filme> filmes = Arrays.asList(FilmeBuilder.umFilme().agora());
+		Double valor = (Double) org.powermock.reflect.Whitebox.invokeMethod(locacaoService, "calcularValorLocacao", filmes);
+		Assert.assertThat(valor, CoreMatchers.is(4.0));
 	}
 }
