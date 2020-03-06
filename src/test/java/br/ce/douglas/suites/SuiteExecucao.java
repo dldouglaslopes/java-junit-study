@@ -10,9 +10,9 @@ import br.ce.douglas.servicos.CalculadoraTest;
 import br.ce.douglas.servicos.CalculoValorLocacaoTest;
 import br.ce.douglas.servicos.LocacaoServiceTest;
 
-@RunWith(Suite.class)
+//@RunWith(Suite.class)
 @SuiteClasses({
-	CalculadoraTest.class,
+//	CalculadoraTest.class,
 	CalculoValorLocacaoTest.class,
 	LocacaoServiceTest.class
 })
